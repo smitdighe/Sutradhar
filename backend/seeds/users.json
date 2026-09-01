@@ -1,0 +1,78 @@
+{
+  "_comment": [
+    "Demo users. Passwords are NOT stored here -- every account uses the value of",
+    "SEED_USER_PASSWORD, defaulting to the documented dev password in seeds/__init__.py.",
+    "The admin is deliberately absent: it is created by scripts/create_admin.py so",
+    "there is exactly one path that mints an ADMIN, and it is not this file.",
+    "Weavers are seeded ACTIVE rather than PENDING_VERIFICATION so a demo does not",
+    "stall on a verification step that Phase 8 owns."
+  ],
+  "users": [
+    {
+      "key": "weaver_patola",
+      "email": "ramesh.patel@patanweavers.example.com",
+      "display_name": "Ramesh Patel",
+      "role": "WEAVER",
+      "status": "ACTIVE",
+      "region": "Patan, Gujarat",
+      "org_name": "Patan Patola Weavers Collective"
+    },
+    {
+      "key": "weaver_sambalpuri",
+      "email": "sarita.meher@bargarhbandha.example.com",
+      "display_name": "Sarita Meher",
+      "role": "WEAVER",
+      "status": "ACTIVE",
+      "region": "Bargarh, Odisha",
+      "org_name": "Bargarh Bandha Karigar Samiti"
+    },
+    {
+      "key": "weaver_kolhapuri",
+      "email": "iqbal.shaikh@kolhapurcluster.example.com",
+      "display_name": "Iqbal Shaikh",
+      "role": "WEAVER",
+      "status": "ACTIVE",
+      "region": "Kolhapur, Maharashtra",
+      "org_name": "Kolhapur Charmakar Cluster"
+    },
+    {
+      "key": "coop_officer",
+      "email": "anjali.deshmukh@handloomcoop.example.com",
+      "display_name": "Anjali Deshmukh",
+      "role": "COOP_OFFICER",
+      "status": "ACTIVE",
+      "region": "Ahmedabad, Gujarat",
+      "org_name": "State Handloom Co-operative Federation"
+    },
+    {
+      "key": "inspector",
+      "email": "vikram.rao@gitextiles.example.com",
+      "display_name": "Vikram Rao",
+      "role": "INSPECTOR",
+      "status": "ACTIVE",
+      "region": "New Delhi",
+      "org_name": "GI Textiles Inspectorate"
+    },
+    {
+      "key": "consumer",
+      "email": "priya.nair@example.com",
+      "display_name": "Priya Nair",
+      "role": "CONSUMER",
+      "status": "ACTIVE",
+      "region": "Bengaluru, Karnataka",
+      "org_name": null
+    },
+    {
+      "_comment": "Seeds the reputation-propagation demo in Phase 8. This weaver has items registered; flagging them must visibly affect the trust standing of everything they touched.",
+      "key": "weaver_flagged",
+      "email": "suspect.weaver@unknownlooms.example.com",
+      "display_name": "Mahesh Solanki",
+      "role": "WEAVER",
+      "status": "ACTIVE",
+      "region": "Surat, Gujarat",
+      "org_name": "Unknown Looms Trading",
+      "fraud_flagged": true,
+      "fraud_reason": "Registered Patola volumes inconsistent with declared loom capacity."
+    }
+  ]
+}

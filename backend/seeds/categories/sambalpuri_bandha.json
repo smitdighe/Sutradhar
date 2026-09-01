@@ -1,0 +1,53 @@
+{
+  "slug": "sambalpuri-bandha",
+  "display_name": "Sambalpuri Bandha",
+  "is_textile": true,
+  "quantity_unit": "metre",
+  "schema_version": 1,
+  "attribute_schema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://sutradhar.local/schemas/sambalpuri-bandha/1",
+    "title": "Sambalpuri Bandha",
+    "description": "Tie-dyed ikat from western Odisha. GI 2010.",
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "tie_dye_technique",
+      "motif_set",
+      "thread_material",
+      "yarn_source_district",
+      "gi_registration_no"
+    ],
+    "properties": {
+      "tie_dye_technique": {
+        "type": "string",
+        "enum": ["bandha", "sapta", "ekphulia"]
+      },
+      "motif_set": {
+        "type": "array",
+        "minItems": 1,
+        "maxItems": 24,
+        "uniqueItems": true,
+        "items": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 40
+        },
+        "description": "Traditional motifs worked into the weave, e.g. shankha, chakra, phula."
+      },
+      "thread_material": {
+        "type": "string",
+        "enum": ["cotton", "tussar", "silk"]
+      },
+      "yarn_source_district": {
+        "type": "string",
+        "minLength": 2,
+        "maxLength": 80
+      },
+      "gi_registration_no": {
+        "type": "string",
+        "pattern": "^GI-[0-9]{3,6}$"
+      }
+    }
+  }
+}

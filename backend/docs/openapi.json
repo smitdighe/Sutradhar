@@ -1,0 +1,5148 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Sutradhar API",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/healthz": {
+      "get": {
+        "tags": [
+          "health"
+        ],
+        "summary": "Liveness probe",
+        "description": "Always ``ok``. Touches no dependency.",
+        "operationId": "healthz_healthz_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object",
+                  "title": "Response Healthz Healthz Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/readyz": {
+      "get": {
+        "tags": [
+          "health"
+        ],
+        "summary": "Readiness probe",
+        "description": "Per-dependency readiness.\n\n503 only when a dependency in :data:`REQUIRED_CHECKS` is down; 200 otherwise,\nhowever degraded the optional ones are. Read the per-item statuses for the\ndetail \u2014 the status code is a routing decision, not a summary.",
+        "operationId": "readyz_readyz_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Readyz Readyz Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v/{tag_code}": {
+      "get": {
+        "tags": [
+          "public"
+        ],
+        "summary": "The public record behind one tag",
+        "description": "Recompute, compare, and report. Reads only -- no scan is recorded here.\n\nA GET that wrote a scan row would mean every link preview, every crawler\nand every browser prefetch counted as somebody holding the object.",
+        "operationId": "verify_v__tag_code__get",
+        "parameters": [
+          {
+            "name": "tag_code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Tag Code"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicItemView"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v/{tag_code}/scan": {
+      "post": {
+        "tags": [
+          "public"
+        ],
+        "summary": "Record a scan of one tag",
+        "description": "Record the scan, score the pattern, attempt the claim, return the record.\n\nOrder matters. The scan is written first so the pattern being scored\nincludes the scan being made -- otherwise the response is always one scan\nbehind the thing it exists to notice. The claim is attempted after, because\na claim is a consequence of a scan having happened.",
+        "operationId": "record_v__tag_code__scan_post",
+        "parameters": [
+          {
+            "name": "tag_code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Tag Code"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/ScanRequest"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Payload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicItemView"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/register": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Register Account",
+        "description": "Create an account. Does not log the caller in.",
+        "operationId": "register_account_api_v1_auth_register_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Login",
+        "description": "Exchange credentials for an access token and a refresh cookie.",
+        "operationId": "login_api_v1_auth_login_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/refresh": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Refresh",
+        "description": "Rotate the refresh token and mint a fresh access token.",
+        "operationId": "refresh_api_v1_auth_refresh_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/logout": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Logout",
+        "description": "Revoke the presented token's whole family and clear the cookie.\n\nIdempotent: an absent or unknown token still returns 204. Logout reporting\nan error is unhelpful -- the caller wanted to be logged out, and after this\nthey are.",
+        "operationId": "logout_api_v1_auth_logout_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LogoutRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/logout-all": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Logout All",
+        "description": "Revoke every family for the authenticated user.",
+        "operationId": "logout_all_api_v1_auth_logout_all_post",
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/auth/me": {
+      "get": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Read Me",
+        "description": "The authenticated user's own profile.",
+        "operationId": "read_me_api_v1_auth_me_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Update Me",
+        "description": "Update display name and region. No other field is reachable.",
+        "operationId": "update_me_api_v1_auth_me_patch",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProfileRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/auth/oauth/providers": {
+      "get": {
+        "tags": [
+          "oauth"
+        ],
+        "summary": "List Providers",
+        "description": "Which providers are usable right now.\n\nAlways 200, even when nothing is configured -- the frontend asks this in\norder to decide whether to render a button, and an error would be a worse\nanswer than ``enabled: false``.",
+        "operationId": "list_providers_api_v1_auth_oauth_providers_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProviderListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/oauth/google/start": {
+      "get": {
+        "tags": [
+          "oauth"
+        ],
+        "summary": "Start Google",
+        "description": "Begin the authorization-code flow. 302 to Google, or 503 if unconfigured.",
+        "operationId": "start_google_api_v1_auth_oauth_google_start_get",
+        "parameters": [
+          {
+            "name": "return_to",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Return To"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/oauth/google/callback": {
+      "get": {
+        "tags": [
+          "oauth"
+        ],
+        "summary": "Google Callback",
+        "description": "Handle Google's redirect back.\n\nAn identity that already maps to an account gets a full session here. One\nthat does not gets a pending token and **no session at all** -- no access\ntoken in the redirect, no refresh cookie set. See :mod:`app.auth.pending`.",
+        "operationId": "google_callback_api_v1_auth_oauth_google_callback_get",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Code"
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "State"
+            }
+          },
+          {
+            "name": "error",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Error"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/oauth/complete": {
+      "post": {
+        "tags": [
+          "oauth"
+        ],
+        "summary": "Complete",
+        "description": "Finish a new-identity sign-up: supply a role, get an account and a session.",
+        "operationId": "complete_api_v1_auth_oauth_complete_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompleteRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/categories": {
+      "get": {
+        "tags": [
+          "catalog"
+        ],
+        "summary": "List Categories",
+        "description": "Latest version of every category. Public.",
+        "operationId": "list_categories_api_v1_categories_get",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "default": 20,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Offset"
+            }
+          },
+          {
+            "name": "include_inactive",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false,
+              "title": "Include Inactive"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryListResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/categories/{slug}": {
+      "get": {
+        "tags": [
+          "catalog"
+        ],
+        "summary": "Read Category",
+        "description": "Latest active version of one category.",
+        "operationId": "read_category_api_v1_categories__slug__get",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Slug"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/categories/{slug}/versions": {
+      "get": {
+        "tags": [
+          "catalog"
+        ],
+        "summary": "Read Versions",
+        "description": "Every published version, oldest first.",
+        "operationId": "read_versions_api_v1_categories__slug__versions_get",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Slug"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryVersionsResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/categories/{slug}/v/{version}": {
+      "get": {
+        "tags": [
+          "catalog"
+        ],
+        "summary": "Read Pinned Version",
+        "description": "One pinned version, retired or not.\n\nRetired versions still resolve: existing items reference them, and a\nverification that 404s because a category was retired would be a broken\nprovenance record.",
+        "operationId": "read_pinned_version_api_v1_categories__slug__v__version__get",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Slug"
+            }
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Version"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/categories/{slug}/validate": {
+      "post": {
+        "tags": [
+          "catalog"
+        ],
+        "summary": "Validate Attributes",
+        "description": "Dry-run an attribute payload against a category. Writes nothing.\n\nLets a client check a form before submitting it, and gives the live-demo\nsequence a real request that proves a just-created category is usable.\nItem registration itself is Phase 6.\n\nRate limited, unlike the reads beside it. This is the only unauthenticated\nendpoint in the system that does real work on a caller-supplied body: it\nloads a schema and runs a validator over arbitrary JSON. The reads answer\nfrom a cached registry and cost a lookup; this costs compilation, and on a\nsingle free-tier instance an unmetered one of those is a way to spend the\nprocess's CPU from outside with no account and no cost to the caller.",
+        "operationId": "validate_attributes_api_v1_categories__slug__validate_post",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Slug"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ValidateAttributesRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidateAttributesResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/categories": {
+      "post": {
+        "tags": [
+          "catalog-admin"
+        ],
+        "summary": "Create Category",
+        "description": "Create a category at v1, usable immediately.\n\nAccepts a category JSON document as the request body, so publishing one on\nstage is ``curl -d @banarasi.json`` and nothing else.",
+        "operationId": "create_category_api_v1_admin_categories_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCategoryRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/categories/{slug}/versions": {
+      "post": {
+        "tags": [
+          "catalog-admin"
+        ],
+        "summary": "Create Version",
+        "description": "Publish v(n+1), and report what it changes.\n\nThe diff is returned so the operator sees the consequence at the moment\nthey cause it, rather than discovering it when registrations start failing.\nExisting items are unaffected either way -- they are pinned to their own\nversion.",
+        "operationId": "create_version_api_v1_admin_categories__slug__versions_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Slug"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateVersionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateVersionResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/categories/{slug}": {
+      "patch": {
+        "tags": [
+          "catalog-admin"
+        ],
+        "summary": "Update Category",
+        "description": "Update display name and active flag. Slug and schema are unreachable.\n\nNeither field exists on ``UpdateCategoryRequest``, so no request shape can\nchange them -- a slug is referenced by URLs and printed tags, and a schema\nchange is a new version by definition.",
+        "operationId": "update_category_api_v1_admin_categories__slug__patch",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Slug"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCategoryRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/items": {
+      "post": {
+        "tags": [
+          "provenance"
+        ],
+        "summary": "Register Item",
+        "description": "Register an item. Item, event, and outbox row commit together or not at all.",
+        "operationId": "register_item_api_v1_items_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterItemRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ItemSummary"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "provenance"
+        ],
+        "summary": "List Items",
+        "description": "Keyset page over items, newest first.",
+        "operationId": "list_items_api_v1_items_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "category_slug",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Category Slug"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/ItemStatus"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "name": "registered_by",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Registered By"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cursor"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "default": 20,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ItemListResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/items/{item_id}/split": {
+      "post": {
+        "tags": [
+          "provenance"
+        ],
+        "summary": "Split Item",
+        "description": "Cut an item into children, enforcing mass balance under a row lock.",
+        "operationId": "split_item_api_v1_items__item_id__split_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "item_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Item Id"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SplitRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SplitResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/items/{item_id}": {
+      "get": {
+        "tags": [
+          "provenance"
+        ],
+        "summary": "Read Item",
+        "description": "One item with its lineage, children, and current chain state.",
+        "operationId": "read_item_api_v1_items__item_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "item_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Item Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ItemDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/items/{item_id}/tree": {
+      "get": {
+        "tags": [
+          "provenance"
+        ],
+        "summary": "Read Tree",
+        "description": "Full subtree, depth-annotated. One recursive CTE.",
+        "operationId": "read_tree_api_v1_items__item_id__tree_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "item_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Item Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TreeNodeResponse"
+                  },
+                  "title": "Response Read Tree Api V1 Items  Item Id  Tree Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/items/{item_id}/events": {
+      "get": {
+        "tags": [
+          "provenance"
+        ],
+        "summary": "Read Events",
+        "description": "Append-only event log, oldest first.",
+        "operationId": "read_events_api_v1_items__item_id__events_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "item_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Item Id"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "default": 50,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Offset"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ItemEventListResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/items/{item_id}/attestations": {
+      "post": {
+        "tags": [
+          "attestation"
+        ],
+        "summary": "Record an attestation about an item",
+        "description": "Vouch for an item. One attestation per actor per item, enforced by the database.\n\nA second attempt is a 409 from ``uq_attestations_item_attestor``, not from\nan application check: a check-then-write has a gap, and two simultaneous\nrequests would both pass it.",
+        "operationId": "create_attestation_api_v1_items__item_id__attestations_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "item_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Item Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAttestationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AttestationResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "attestation"
+        ],
+        "summary": "List the attestations recorded against an item",
+        "description": "Newest first. Carries roles and pseudonymous references, never identities.",
+        "operationId": "list_attestations_api_v1_items__item_id__attestations_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "item_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Item Id"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cursor"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AttestationListResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/items/{item_id}/trust": {
+      "get": {
+        "tags": [
+          "attestation"
+        ],
+        "summary": "Who vouched for this item, and how independent were they",
+        "description": "Derived on every read from the attestation and dispute sets.\n\nNothing is cached and nothing is stored, so a fraud flag applied a second\nago is already reflected here.",
+        "operationId": "get_trust_api_v1_items__item_id__trust_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "item_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Item Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrustResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/actors/{user_id}/fraud-flag": {
+      "post": {
+        "tags": [
+          "attestation",
+          "admin"
+        ],
+        "summary": "Flag an actor and dispute everything they registered",
+        "description": "One transaction: the flag, the audit event, and every affected item.\n\nItems the actor *registered* become disputed. Items they merely attested to\nare not touched -- their trust level drops on the next read, because the\nlevel is derived and a flagged attestor stops counting.",
+        "operationId": "fraud_flag_api_v1_admin_actors__user_id__fraud_flag_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "User Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FlagActorRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FlagActorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/actors/{user_id}/fraud-clear": {
+      "post": {
+        "tags": [
+          "attestation",
+          "admin"
+        ],
+        "summary": "Lift a fraud flag and the disputes it caused",
+        "description": "Reverses exactly what the flag did, and nothing else.\n\nAn item independently disputed by an inspector stays disputed: that finding\nis not this flag's to lift.",
+        "operationId": "fraud_clear_api_v1_admin_actors__user_id__fraud_clear_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "User Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FlagActorRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FlagActorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/media": {
+      "post": {
+        "tags": [
+          "media"
+        ],
+        "summary": "Upload a file",
+        "description": "Stream, bound, sniff, hash, budget, mirror, store, then try to pin.\n\nReturns 201 even when pinning fails or is switched off. The SHA-256 is the\nintegrity proof and it is already committed; the CID only records where a\ncopy happens to live, and a pinning service having a bad day is not a reason\nto reject a weaver's photograph.",
+        "operationId": "upload_api_v1_media_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_api_v1_media_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MediaDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/media/{media_id}": {
+      "get": {
+        "tags": [
+          "media"
+        ],
+        "summary": "Media metadata and tiers",
+        "description": "Every tier this file can be read from right now, best first.",
+        "operationId": "get_media_api_v1_media__media_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "media_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Media Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MediaDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/media/{media_id}/raw": {
+      "get": {
+        "tags": [
+          "media"
+        ],
+        "summary": "Serve the bytes from the best available tier",
+        "description": "Serve the file, falling through tiers rather than trusting any one.\n\n``tier`` is a preference, not an instruction: the mirror may have been wiped\nby a redeploy since the row was written, so a request for it still falls\nback to the blob rather than 404ing on a tier that used to exist.",
+        "operationId": "get_raw_api_v1_media__media_id__raw_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "media_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Media Id"
+            }
+          },
+          {
+            "name": "tier",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "MIRROR or BLOB; advisory only",
+              "title": "Tier"
+            },
+            "description": "MIRROR or BLOB; advisory only"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/items/{item_id}/media": {
+      "post": {
+        "tags": [
+          "media"
+        ],
+        "summary": "Link media to an item",
+        "description": "Only the item's registrant, or an admin.",
+        "operationId": "attach_api_v1_items__item_id__media_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "item_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Item Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AttachMediaRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ItemMediaResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "media"
+        ],
+        "summary": "List an item's media",
+        "operationId": "list_item_media_api_v1_items__item_id__media_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "item_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Item Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ItemMediaResponse"
+                  },
+                  "title": "Response List Item Media Api V1 Items  Item Id  Media Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/items/{item_id}/media/{media_id}": {
+      "delete": {
+        "tags": [
+          "media"
+        ],
+        "summary": "Unlink media from an item",
+        "description": "Removes the link. The media row and its bytes are kept.\n\nThe SHA-256 may already be anchored on chain, and deleting the bytes behind\nan anchored hash produces exactly the dead reference the three-tier storage\ndesign exists to prevent. \"No longer depicts this item\" is not \"never\nexisted\".",
+        "operationId": "detach_api_v1_items__item_id__media__media_id__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "item_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Item Id"
+            }
+          },
+          {
+            "name": "media_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Media Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/items/{item_id}/tag": {
+      "post": {
+        "tags": [
+          "qr"
+        ],
+        "summary": "Issue a tag code for an item",
+        "description": "Generate a code, bind it to the item, and record a ``TAG_ISSUED`` event.\n\n409 when the item is already tagged, with the existing code in the error\ndetails: that is a fact to read, not a failure to retry.",
+        "operationId": "issue_tag_api_v1_items__item_id__tag_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "item_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Item Id"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TagResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/items/{item_id}/tag/qr": {
+      "get": {
+        "tags": [
+          "qr"
+        ],
+        "summary": "Render an item's tag as a QR image",
+        "description": "PNG by default, SVG on request. Error correction Q, four-module quiet zone.\n\n``size`` is a pixel edge for the PNG and the default ``width``/``height`` on\nthe SVG, which also carries a ``viewBox`` so it scales to any label.",
+        "operationId": "render_qr_api_v1_items__item_id__tag_qr_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "item_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Item Id"
+            }
+          },
+          {
+            "name": "format",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^(png|svg)$",
+              "default": "png",
+              "title": "Format"
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 512,
+              "title": "Size"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "image/png": {},
+              "image/svg+xml": {}
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/tags/bulk": {
+      "post": {
+        "tags": [
+          "qr",
+          "admin"
+        ],
+        "summary": "Issue tags for many items at once",
+        "description": "Tag a batch, reporting each item separately.\n\nAn already-tagged item or one whose anchoring failed is reported and\nstepped over. Rejecting the whole batch for one bad row would make an\noperator find and remove it by hand before any of the good ones printed.",
+        "operationId": "bulk_issue_api_v1_admin_tags_bulk_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BulkTagRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BulkTagResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/system/status": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Queue depth, dead letters, indexer lag, quotas, workers, chain mode",
+        "description": "One read of everything an operator needs before presenting.",
+        "operationId": "system_status_api_v1_admin_system_status_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SystemStatusResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AttachMediaRequest": {
+        "properties": {
+          "media_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Media Id"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/MediaKind"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "media_id",
+          "kind"
+        ],
+        "title": "AttachMediaRequest",
+        "description": "Link an already-uploaded file to an item."
+      },
+      "AttestationListResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/AttestationResponse"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items"
+        ],
+        "title": "AttestationListResponse",
+        "description": "A page of attestations, newest first."
+      },
+      "AttestationResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "item_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Item Id"
+          },
+          "attestor_ref": {
+            "type": "string",
+            "title": "Attestor Ref"
+          },
+          "attestor_role": {
+            "$ref": "#/components/schemas/UserRole"
+          },
+          "attestor_fraud_flagged": {
+            "type": "boolean",
+            "title": "Attestor Fraud Flagged"
+          },
+          "statement": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Statement"
+          },
+          "statement_hash": {
+            "type": "string",
+            "title": "Statement Hash"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "item_id",
+          "attestor_ref",
+          "attestor_role",
+          "attestor_fraud_flagged",
+          "statement",
+          "statement_hash",
+          "created_at"
+        ],
+        "title": "AttestationResponse",
+        "description": "One recorded attestation, with the attestor pseudonymised."
+      },
+      "Body_upload_api_v1_media_post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "contentMediaType": "application/octet-stream",
+            "title": "File"
+          }
+        },
+        "type": "object",
+        "required": [
+          "file"
+        ],
+        "title": "Body_upload_api_v1_media_post"
+      },
+      "BulkTagRequest": {
+        "properties": {
+          "item_ids": {
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "type": "array",
+            "title": "Item Ids"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "item_ids"
+        ],
+        "title": "BulkTagRequest",
+        "description": "Items to tag in one pass."
+      },
+      "BulkTagResponse": {
+        "properties": {
+          "requested": {
+            "type": "integer",
+            "title": "Requested"
+          },
+          "issued": {
+            "type": "integer",
+            "title": "Issued"
+          },
+          "already_tagged": {
+            "type": "integer",
+            "title": "Already Tagged"
+          },
+          "failed": {
+            "type": "integer",
+            "title": "Failed"
+          },
+          "results": {
+            "items": {
+              "$ref": "#/components/schemas/BulkTagResult"
+            },
+            "type": "array",
+            "title": "Results"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "requested",
+          "issued",
+          "already_tagged",
+          "failed",
+          "results"
+        ],
+        "title": "BulkTagResponse",
+        "description": "Per-item results and their totals. Partial success is a success."
+      },
+      "BulkTagResult": {
+        "properties": {
+          "item_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Item Id"
+          },
+          "outcome": {
+            "type": "string",
+            "title": "Outcome"
+          },
+          "tag_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tag Code"
+          },
+          "display_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Display Code"
+          },
+          "payload_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Payload Url"
+          },
+          "reason_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason Code"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Warnings"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "item_id",
+          "outcome"
+        ],
+        "title": "BulkTagResult",
+        "description": "What happened to one item in the batch."
+      },
+      "CategoryDetail": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "slug": {
+            "type": "string",
+            "title": "Slug"
+          },
+          "display_name": {
+            "type": "string",
+            "title": "Display Name"
+          },
+          "is_textile": {
+            "type": "boolean",
+            "title": "Is Textile"
+          },
+          "quantity_unit": {
+            "type": "string",
+            "title": "Quantity Unit"
+          },
+          "schema_version": {
+            "type": "integer",
+            "title": "Schema Version"
+          },
+          "is_active": {
+            "type": "boolean",
+            "title": "Is Active"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "attribute_schema": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Attribute Schema"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "slug",
+          "display_name",
+          "is_textile",
+          "quantity_unit",
+          "schema_version",
+          "is_active",
+          "created_at",
+          "attribute_schema"
+        ],
+        "title": "CategoryDetail",
+        "description": "A category with its schema."
+      },
+      "CategoryListResponse": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/CategorySummary"
+            },
+            "type": "array",
+            "title": "Data"
+          },
+          "pagination": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Pagination"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data",
+          "pagination"
+        ],
+        "title": "CategoryListResponse",
+        "description": "Collection envelope, per app.core.envelope."
+      },
+      "CategorySummary": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "slug": {
+            "type": "string",
+            "title": "Slug"
+          },
+          "display_name": {
+            "type": "string",
+            "title": "Display Name"
+          },
+          "is_textile": {
+            "type": "boolean",
+            "title": "Is Textile"
+          },
+          "quantity_unit": {
+            "type": "string",
+            "title": "Quantity Unit"
+          },
+          "schema_version": {
+            "type": "integer",
+            "title": "Schema Version"
+          },
+          "is_active": {
+            "type": "boolean",
+            "title": "Is Active"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "slug",
+          "display_name",
+          "is_textile",
+          "quantity_unit",
+          "schema_version",
+          "is_active",
+          "created_at"
+        ],
+        "title": "CategorySummary",
+        "description": "A category in a listing."
+      },
+      "CategoryVersionsResponse": {
+        "properties": {
+          "slug": {
+            "type": "string",
+            "title": "Slug"
+          },
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/CategorySummary"
+            },
+            "type": "array",
+            "title": "Data"
+          }
+        },
+        "type": "object",
+        "required": [
+          "slug",
+          "data"
+        ],
+        "title": "CategoryVersionsResponse"
+      },
+      "CategoryView": {
+        "properties": {
+          "slug": {
+            "type": "string",
+            "title": "Slug"
+          },
+          "display_name": {
+            "type": "string",
+            "title": "Display Name"
+          },
+          "schema_version": {
+            "type": "integer",
+            "title": "Schema Version"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "slug",
+          "display_name",
+          "schema_version"
+        ],
+        "title": "CategoryView",
+        "description": "The GI category, as a reader would name it."
+      },
+      "ChainState": {
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/ItemStatus"
+          },
+          "anchored": {
+            "type": "boolean",
+            "title": "Anchored"
+          },
+          "tx_hash": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tx Hash"
+          },
+          "block_number": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Block Number"
+          },
+          "confirmations": {
+            "type": "integer",
+            "title": "Confirmations",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "anchored"
+        ],
+        "title": "ChainState",
+        "description": "What the chain currently knows. Honest about PENDING.\n\nAn item is PENDING until Phase 7's worker sees the required confirmations.\nReporting CONFIRMED before that would be a lie the demo tells, and the whole\nproposition is that this record can be trusted."
+      },
+      "ChainStatusView": {
+        "properties": {
+          "mode": {
+            "type": "string",
+            "title": "Mode"
+          },
+          "contract_address": {
+            "type": "string",
+            "title": "Contract Address"
+          },
+          "chain_id": {
+            "type": "integer",
+            "title": "Chain Id"
+          },
+          "write_enabled": {
+            "type": "boolean",
+            "title": "Write Enabled"
+          },
+          "signer_configured": {
+            "type": "boolean",
+            "title": "Signer Configured"
+          },
+          "contract_deployed": {
+            "type": "boolean",
+            "title": "Contract Deployed"
+          },
+          "rpc_available": {
+            "type": "boolean",
+            "title": "Rpc Available"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "mode",
+          "contract_address",
+          "chain_id",
+          "write_enabled",
+          "signer_configured",
+          "contract_deployed",
+          "rpc_available"
+        ],
+        "title": "ChainStatusView",
+        "description": "What the anchoring path can actually do right now."
+      },
+      "ChainView": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "tx_hash": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tx Hash"
+          },
+          "block_number": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Block Number"
+          },
+          "confirmations": {
+            "type": "integer",
+            "title": "Confirmations",
+            "default": 0
+          },
+          "anchored_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Anchored At"
+          },
+          "verification": {
+            "$ref": "#/components/schemas/VerificationResult"
+          },
+          "stale": {
+            "type": "boolean",
+            "title": "Stale"
+          },
+          "chain_checked_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Chain Checked At"
+          },
+          "inclusion_proof": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/InclusionProofView"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "status",
+          "verification",
+          "stale",
+          "chain_checked_at"
+        ],
+        "title": "ChainView",
+        "description": "What the chain says, when it was asked, and whether the answer is fresh."
+      },
+      "ClaimBlock": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "claimed": {
+            "type": "boolean",
+            "title": "Claimed"
+          },
+          "claimed_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Claimed At"
+          },
+          "is_your_claim": {
+            "type": "boolean",
+            "title": "Is Your Claim",
+            "default": false
+          },
+          "claimed_region": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Claimed Region"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Message"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "status",
+          "claimed"
+        ],
+        "title": "ClaimBlock",
+        "description": "First-scan-wins ownership, stated as fact."
+      },
+      "CompleteRequest": {
+        "properties": {
+          "pending_token": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Pending Token"
+          },
+          "role": {
+            "$ref": "#/components/schemas/UserRole"
+          },
+          "display_name": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Display Name"
+          },
+          "region": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Region"
+          },
+          "org_name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 200
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Org Name"
+          }
+        },
+        "type": "object",
+        "required": [
+          "pending_token",
+          "role",
+          "display_name"
+        ],
+        "title": "CompleteRequest",
+        "description": "Finish a new-identity sign-up.\n\n``role`` is mandatory and is always re-validated against\n``SELF_ASSIGNABLE_ROLES`` in the handler. The pending token deliberately\ncarries no role, so this is the only place one enters the system and the\nonly place it can be checked. Email is absent: it comes from the verified\nprovider identity, never from the client."
+      },
+      "CreateAttestationRequest": {
+        "properties": {
+          "statement": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Statement",
+            "description": "Free-form claim: inspection notes, ledger references, dates."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "statement"
+        ],
+        "title": "CreateAttestationRequest",
+        "description": "A claim one party makes about one item."
+      },
+      "CreateCategoryRequest": {
+        "properties": {
+          "slug": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 2,
+            "title": "Slug"
+          },
+          "display_name": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Display Name"
+          },
+          "is_textile": {
+            "type": "boolean",
+            "title": "Is Textile",
+            "default": true
+          },
+          "quantity_unit": {
+            "type": "string",
+            "maxLength": 32,
+            "minLength": 1,
+            "title": "Quantity Unit"
+          },
+          "attribute_schema": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Attribute Schema"
+          }
+        },
+        "type": "object",
+        "required": [
+          "slug",
+          "display_name",
+          "quantity_unit",
+          "attribute_schema"
+        ],
+        "title": "CreateCategoryRequest",
+        "description": "Create a category at v1.\n\n``schema_version`` is absent on purpose: v1 is implied, and letting a caller\npick a starting version would allow gaps that make \"the previous version\"\nambiguous."
+      },
+      "CreateVersionRequest": {
+        "properties": {
+          "attribute_schema": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Attribute Schema"
+          }
+        },
+        "type": "object",
+        "required": [
+          "attribute_schema"
+        ],
+        "title": "CreateVersionRequest",
+        "description": "Publish v(n+1) of an existing category. Only the schema changes."
+      },
+      "CreateVersionResponse": {
+        "properties": {
+          "category": {
+            "$ref": "#/components/schemas/CategoryDetail"
+          },
+          "diff": {
+            "$ref": "#/components/schemas/SchemaDiff"
+          },
+          "breaking": {
+            "type": "boolean",
+            "title": "Breaking"
+          }
+        },
+        "type": "object",
+        "required": [
+          "category",
+          "diff",
+          "breaking"
+        ],
+        "title": "CreateVersionResponse"
+      },
+      "DisputeStatus": {
+        "type": "string",
+        "enum": [
+          "NONE",
+          "DISPUTED"
+        ],
+        "title": "DisputeStatus",
+        "description": "Whether an item's provenance is contested."
+      },
+      "FlagActorRequest": {
+        "properties": {
+          "reason": {
+            "type": "string",
+            "maxLength": 1000,
+            "minLength": 8,
+            "title": "Reason"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "reason"
+        ],
+        "title": "FlagActorRequest",
+        "description": "Admin action. The reason is required and is shown on every item it touches."
+      },
+      "FlagActorResponse": {
+        "properties": {
+          "actor_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Actor Id"
+          },
+          "fraud_flagged": {
+            "type": "boolean",
+            "title": "Fraud Flagged"
+          },
+          "items_affected": {
+            "type": "integer",
+            "title": "Items Affected"
+          },
+          "attestations_affected": {
+            "type": "integer",
+            "title": "Attestations Affected"
+          },
+          "already_in_state": {
+            "type": "boolean",
+            "title": "Already In State",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "actor_id",
+          "fraud_flagged",
+          "items_affected",
+          "attestations_affected"
+        ],
+        "title": "FlagActorResponse",
+        "description": "What a flag or a clear actually changed, reported back plainly."
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "InclusionProofView": {
+        "properties": {
+          "root": {
+            "type": "string",
+            "title": "Root"
+          },
+          "leaf_index": {
+            "type": "integer",
+            "title": "Leaf Index"
+          },
+          "leaf_count": {
+            "type": "integer",
+            "title": "Leaf Count"
+          },
+          "proof": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Proof"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "root",
+          "leaf_index",
+          "leaf_count",
+          "proof"
+        ],
+        "title": "InclusionProofView",
+        "description": "A batched item's proof that its hash is under the anchored root.\n\nPublished because it is checkable without this service: a reader with the\nroot, the leaf and these siblings can run the same computation offline and\ndoes not have to take the answer on trust."
+      },
+      "IndexerStatusView": {
+        "properties": {
+          "checkpoint_block": {
+            "type": "integer",
+            "title": "Checkpoint Block"
+          },
+          "head_block": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Head Block"
+          },
+          "lag_blocks": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lag Blocks"
+          },
+          "detail": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Detail"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "checkpoint_block"
+        ],
+        "title": "IndexerStatusView",
+        "description": "How far behind the event mirror is.\n\n``lag_blocks`` is ``None`` -- not zero -- when the head could not be read.\nZero means caught up, and reporting an unreachable node as caught up is the\nsingle most misleading thing this endpoint could do."
+      },
+      "ItemDetail": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "category_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Category Id"
+          },
+          "category_schema_version": {
+            "type": "integer",
+            "title": "Category Schema Version"
+          },
+          "parent_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Parent Id"
+          },
+          "registered_by": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Registered By"
+          },
+          "quantity": {
+            "type": "string",
+            "title": "Quantity"
+          },
+          "quantity_unit": {
+            "type": "string",
+            "title": "Quantity Unit"
+          },
+          "item_hash": {
+            "type": "string",
+            "title": "Item Hash"
+          },
+          "tag_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tag Code"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ItemStatus"
+          },
+          "dispute_status": {
+            "$ref": "#/components/schemas/DisputeStatus"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "category_slug": {
+            "type": "string",
+            "title": "Category Slug"
+          },
+          "attributes": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Attributes"
+          },
+          "remaining_quantity": {
+            "type": "string",
+            "title": "Remaining Quantity"
+          },
+          "ancestry": {
+            "items": {
+              "$ref": "#/components/schemas/TreeNodeResponse"
+            },
+            "type": "array",
+            "title": "Ancestry"
+          },
+          "children": {
+            "items": {
+              "$ref": "#/components/schemas/TreeNodeResponse"
+            },
+            "type": "array",
+            "title": "Children"
+          },
+          "chain": {
+            "$ref": "#/components/schemas/ChainState"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "category_id",
+          "category_schema_version",
+          "parent_id",
+          "registered_by",
+          "quantity",
+          "quantity_unit",
+          "item_hash",
+          "tag_code",
+          "status",
+          "dispute_status",
+          "created_at",
+          "category_slug",
+          "attributes",
+          "remaining_quantity",
+          "ancestry",
+          "children",
+          "chain"
+        ],
+        "title": "ItemDetail",
+        "description": "One item with everything an authenticated caller may see."
+      },
+      "ItemEventListResponse": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/ItemEventResponse"
+            },
+            "type": "array",
+            "title": "Data"
+          },
+          "pagination": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Pagination"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data",
+          "pagination"
+        ],
+        "title": "ItemEventListResponse"
+      },
+      "ItemEventResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "item_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Item Id"
+          },
+          "event_type": {
+            "type": "string",
+            "title": "Event Type"
+          },
+          "actor_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Actor Id"
+          },
+          "payload": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Payload"
+          },
+          "payload_hash": {
+            "type": "string",
+            "title": "Payload Hash"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "item_id",
+          "event_type",
+          "actor_id",
+          "payload",
+          "payload_hash",
+          "created_at"
+        ],
+        "title": "ItemEventResponse",
+        "description": "One append-only provenance event."
+      },
+      "ItemListResponse": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/ItemSummary"
+            },
+            "type": "array",
+            "title": "Data"
+          },
+          "pagination": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Pagination"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data",
+          "pagination"
+        ],
+        "title": "ItemListResponse",
+        "description": "Collection envelope with a keyset cursor, per app.core.pagination."
+      },
+      "ItemMediaResponse": {
+        "properties": {
+          "media": {
+            "$ref": "#/components/schemas/MediaSummary"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/MediaKind"
+          }
+        },
+        "type": "object",
+        "required": [
+          "media",
+          "kind"
+        ],
+        "title": "ItemMediaResponse",
+        "description": "One media file as it appears on an item."
+      },
+      "ItemStatus": {
+        "type": "string",
+        "enum": [
+          "PENDING",
+          "CONFIRMED",
+          "FAILED"
+        ],
+        "title": "ItemStatus",
+        "description": "Anchoring state of an item's hash. PENDING until the chain confirms."
+      },
+      "ItemSummary": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "category_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Category Id"
+          },
+          "category_schema_version": {
+            "type": "integer",
+            "title": "Category Schema Version"
+          },
+          "parent_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Parent Id"
+          },
+          "registered_by": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Registered By"
+          },
+          "quantity": {
+            "type": "string",
+            "title": "Quantity"
+          },
+          "quantity_unit": {
+            "type": "string",
+            "title": "Quantity Unit"
+          },
+          "item_hash": {
+            "type": "string",
+            "title": "Item Hash"
+          },
+          "tag_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tag Code"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ItemStatus"
+          },
+          "dispute_status": {
+            "$ref": "#/components/schemas/DisputeStatus"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "category_id",
+          "category_schema_version",
+          "parent_id",
+          "registered_by",
+          "quantity",
+          "quantity_unit",
+          "item_hash",
+          "tag_code",
+          "status",
+          "dispute_status",
+          "created_at"
+        ],
+        "title": "ItemSummary",
+        "description": "An item in a listing."
+      },
+      "LoginRequest": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email"
+          },
+          "password": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "title": "Password"
+          }
+        },
+        "type": "object",
+        "required": [
+          "email",
+          "password"
+        ],
+        "title": "LoginRequest"
+      },
+      "LogoutRequest": {
+        "properties": {
+          "refresh_token": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Refresh Token"
+          }
+        },
+        "type": "object",
+        "title": "LogoutRequest"
+      },
+      "MediaDetail": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "sha256": {
+            "type": "string",
+            "title": "Sha256"
+          },
+          "byte_size": {
+            "type": "integer",
+            "title": "Byte Size"
+          },
+          "content_type": {
+            "type": "string",
+            "title": "Content Type"
+          },
+          "cid": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cid"
+          },
+          "pin_status": {
+            "$ref": "#/components/schemas/PinStatus"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "tiers": {
+            "items": {
+              "$ref": "#/components/schemas/TierResponse"
+            },
+            "type": "array",
+            "title": "Tiers"
+          },
+          "primary_tier": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Tier"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "durable": {
+            "type": "boolean",
+            "title": "Durable",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "sha256",
+          "byte_size",
+          "content_type",
+          "cid",
+          "pin_status",
+          "created_at",
+          "tiers"
+        ],
+        "title": "MediaDetail",
+        "description": "A media row plus every way to read it."
+      },
+      "MediaKind": {
+        "type": "string",
+        "enum": [
+          "LOOM_PHOTO",
+          "WEAVE_MACRO",
+          "CERTIFICATE",
+          "VIDEO"
+        ],
+        "title": "MediaKind",
+        "description": "What a piece of media depicts, per item."
+      },
+      "MediaSummary": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "sha256": {
+            "type": "string",
+            "title": "Sha256"
+          },
+          "byte_size": {
+            "type": "integer",
+            "title": "Byte Size"
+          },
+          "content_type": {
+            "type": "string",
+            "title": "Content Type"
+          },
+          "cid": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cid"
+          },
+          "pin_status": {
+            "$ref": "#/components/schemas/PinStatus"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "sha256",
+          "byte_size",
+          "content_type",
+          "cid",
+          "pin_status",
+          "created_at"
+        ],
+        "title": "MediaSummary",
+        "description": "A media row, without its bytes."
+      },
+      "MediaView": {
+        "properties": {
+          "kind": {
+            "type": "string",
+            "title": "Kind"
+          },
+          "sha256": {
+            "type": "string",
+            "title": "Sha256"
+          },
+          "cid": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cid"
+          },
+          "gateway_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gateway Url"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "kind",
+          "sha256"
+        ],
+        "title": "MediaView",
+        "description": "One piece of media, addressed by content.\n\n``gateway_url`` is null until the file is pinned. The digest is published\neither way: it is the integrity claim, and it is true whether or not\nanybody is currently hosting the bytes."
+      },
+      "OutboxDepthView": {
+        "properties": {
+          "job_type": {
+            "type": "string",
+            "title": "Job Type"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "count": {
+            "type": "integer",
+            "title": "Count"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "job_type",
+          "status",
+          "count"
+        ],
+        "title": "OutboxDepthView",
+        "description": "How many jobs of one type sit in one state."
+      },
+      "PinStatus": {
+        "type": "string",
+        "enum": [
+          "PIN_PENDING",
+          "PINNED",
+          "PIN_FAILED"
+        ],
+        "title": "PinStatus",
+        "description": "IPFS pinning state for a media blob."
+      },
+      "ProvenanceView": {
+        "properties": {
+          "ancestry": {
+            "items": {
+              "$ref": "#/components/schemas/TreeStepView"
+            },
+            "type": "array",
+            "title": "Ancestry"
+          },
+          "events": {
+            "items": {
+              "$ref": "#/components/schemas/PublicEventView"
+            },
+            "type": "array",
+            "title": "Events"
+          },
+          "child_count": {
+            "type": "integer",
+            "title": "Child Count",
+            "default": 0
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "ProvenanceView",
+        "description": "Lineage and history."
+      },
+      "ProviderListResponse": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/ProviderStatusResponse"
+            },
+            "type": "array",
+            "title": "Data"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "title": "ProviderListResponse",
+        "description": "Collection envelope, per app.core.envelope."
+      },
+      "ProviderStatusResponse": {
+        "properties": {
+          "provider": {
+            "type": "string",
+            "title": "Provider"
+          },
+          "enabled": {
+            "type": "boolean",
+            "title": "Enabled"
+          }
+        },
+        "type": "object",
+        "required": [
+          "provider",
+          "enabled"
+        ],
+        "title": "ProviderStatusResponse",
+        "description": "One provider and whether it is usable right now."
+      },
+      "PublicEventView": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "title": "Type"
+          },
+          "at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "At"
+          },
+          "tx_hash": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tx Hash"
+          },
+          "block_number": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Block Number"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "type",
+          "at"
+        ],
+        "title": "PublicEventView",
+        "description": "One provenance event, reduced to its type and its timing.\n\nPayloads are not published. They carry preimages and hashes that belong in\nan audit, not on a shop floor, and an event log that publishes its payloads\nis a slow leak waiting for somebody to add a field to one."
+      },
+      "PublicItemView": {
+        "properties": {
+          "tag_code": {
+            "type": "string",
+            "title": "Tag Code"
+          },
+          "display_code": {
+            "type": "string",
+            "title": "Display Code"
+          },
+          "category": {
+            "$ref": "#/components/schemas/CategoryView"
+          },
+          "attributes": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Attributes"
+          },
+          "quantity": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Quantity"
+          },
+          "quantity_unit": {
+            "type": "string",
+            "title": "Quantity Unit"
+          },
+          "trust": {
+            "$ref": "#/components/schemas/TrustView"
+          },
+          "chain": {
+            "$ref": "#/components/schemas/ChainView"
+          },
+          "provenance": {
+            "$ref": "#/components/schemas/ProvenanceView"
+          },
+          "story": {
+            "$ref": "#/components/schemas/StoryView"
+          },
+          "scan": {
+            "$ref": "#/components/schemas/ScanBlock"
+          },
+          "claim": {
+            "$ref": "#/components/schemas/ClaimBlock"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "tag_code",
+          "display_code",
+          "category",
+          "quantity",
+          "quantity_unit",
+          "trust",
+          "chain",
+          "provenance",
+          "story",
+          "scan",
+          "claim"
+        ],
+        "title": "PublicItemView",
+        "description": "Everything a scan of one tag returns."
+      },
+      "QuotaView": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "used": {
+            "type": "string",
+            "title": "Used"
+          },
+          "budget": {
+            "type": "string",
+            "title": "Budget"
+          },
+          "used_percent": {
+            "type": "number",
+            "title": "Used Percent"
+          },
+          "period_start": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Period Start"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "name",
+          "used",
+          "budget",
+          "used_percent",
+          "period_start"
+        ],
+        "title": "QuotaView",
+        "description": "Consumption against one metered budget."
+      },
+      "RefreshRequest": {
+        "properties": {
+          "refresh_token": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Refresh Token"
+          }
+        },
+        "type": "object",
+        "title": "RefreshRequest",
+        "description": "Body fallback for clients without a cookie jar."
+      },
+      "RegisterItemRequest": {
+        "properties": {
+          "category_slug": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Category Slug"
+          },
+          "attributes": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Attributes"
+          },
+          "quantity": {
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0.0
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              }
+            ],
+            "title": "Quantity"
+          },
+          "quantity_unit": {
+            "type": "string",
+            "maxLength": 32,
+            "minLength": 1,
+            "title": "Quantity Unit"
+          },
+          "parent_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Parent Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "category_slug",
+          "attributes",
+          "quantity",
+          "quantity_unit"
+        ],
+        "title": "RegisterItemRequest",
+        "description": "Register a new item, or a root of a new provenance tree."
+      },
+      "RegisterRequest": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email"
+          },
+          "password": {
+            "type": "string",
+            "maxLength": 256,
+            "minLength": 1,
+            "title": "Password"
+          },
+          "display_name": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Display Name"
+          },
+          "role": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/UserRole"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "region": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Region"
+          },
+          "org_name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 200
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Org Name"
+          }
+        },
+        "type": "object",
+        "required": [
+          "email",
+          "password",
+          "display_name"
+        ],
+        "title": "RegisterRequest",
+        "description": "New account. ``role`` must be self-assignable; absent means CONSUMER."
+      },
+      "ScanBlock": {
+        "properties": {
+          "count": {
+            "type": "integer",
+            "title": "Count"
+          },
+          "suspicion_level": {
+            "type": "string",
+            "title": "Suspicion Level"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
+          "signals": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Signals"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "count",
+          "suspicion_level"
+        ],
+        "title": "ScanBlock",
+        "description": "How often this tag has been scanned, and what that pattern looks like."
+      },
+      "ScanRequest": {
+        "properties": {
+          "device_fingerprint": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Device Fingerprint"
+          },
+          "region_code": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 8
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Region Code"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "ScanRequest",
+        "description": "The optional body of a scan.\n\nBoth fields are hints. The fingerprint is an opaque string the client\nchooses and this service only ever stores hashed; the region is consulted\nonly when the edge that terminated the connection said nothing."
+      },
+      "SchedulerJobView": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "next_run_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Run At"
+          },
+          "last_run_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Run At"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "title": "SchedulerJobView",
+        "description": "One registered background job."
+      },
+      "SchemaDiff": {
+        "properties": {
+          "added": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Added"
+          },
+          "removed": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Removed"
+          },
+          "type_changed": {
+            "items": {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Type Changed"
+          },
+          "newly_required": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Newly Required"
+          },
+          "no_longer_required": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "No Longer Required"
+          }
+        },
+        "type": "object",
+        "required": [
+          "added",
+          "removed",
+          "type_changed",
+          "newly_required",
+          "no_longer_required"
+        ],
+        "title": "SchemaDiff",
+        "description": "What publishing this version changes, relative to the previous one.\n\nReturned from the create-version endpoint so an operator sees the\nconsequence at the moment they cause it, rather than discovering it when a\nweaver's next registration starts failing."
+      },
+      "SplitChild": {
+        "properties": {
+          "attributes": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Attributes"
+          },
+          "quantity": {
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0.0
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              }
+            ],
+            "title": "Quantity"
+          },
+          "quantity_unit": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quantity Unit"
+          }
+        },
+        "type": "object",
+        "required": [
+          "attributes",
+          "quantity"
+        ],
+        "title": "SplitChild",
+        "description": "One piece cut from a parent."
+      },
+      "SplitRequest": {
+        "properties": {
+          "children": {
+            "items": {
+              "$ref": "#/components/schemas/SplitChild"
+            },
+            "type": "array",
+            "maxItems": 50,
+            "minItems": 1,
+            "title": "Children"
+          }
+        },
+        "type": "object",
+        "required": [
+          "children"
+        ],
+        "title": "SplitRequest",
+        "description": "Cut a parent into children. Mass balance is enforced across all of them."
+      },
+      "SplitResponse": {
+        "properties": {
+          "parent_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Parent Id"
+          },
+          "children": {
+            "items": {
+              "$ref": "#/components/schemas/ItemSummary"
+            },
+            "type": "array",
+            "title": "Children"
+          },
+          "parent_quantity": {
+            "type": "string",
+            "title": "Parent Quantity"
+          },
+          "allocated": {
+            "type": "string",
+            "title": "Allocated"
+          },
+          "remaining": {
+            "type": "string",
+            "title": "Remaining"
+          },
+          "max_depth": {
+            "type": "integer",
+            "title": "Max Depth",
+            "default": 5
+          }
+        },
+        "type": "object",
+        "required": [
+          "parent_id",
+          "children",
+          "parent_quantity",
+          "allocated",
+          "remaining"
+        ],
+        "title": "SplitResponse",
+        "description": "The outcome of a split, with the parent's updated accounting."
+      },
+      "StoryView": {
+        "properties": {
+          "weaver_display_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Weaver Display Name"
+          },
+          "region": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Region"
+          },
+          "maker_opted_out": {
+            "type": "boolean",
+            "title": "Maker Opted Out",
+            "default": false
+          },
+          "media": {
+            "items": {
+              "$ref": "#/components/schemas/MediaView"
+            },
+            "type": "array",
+            "title": "Media"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "StoryView",
+        "description": "The maker's side of the record, as far as they have allowed."
+      },
+      "SystemStatusResponse": {
+        "properties": {
+          "observed_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Observed At"
+          },
+          "app_env": {
+            "type": "string",
+            "title": "App Env"
+          },
+          "chain": {
+            "$ref": "#/components/schemas/ChainStatusView"
+          },
+          "outbox": {
+            "items": {
+              "$ref": "#/components/schemas/OutboxDepthView"
+            },
+            "type": "array",
+            "title": "Outbox"
+          },
+          "outbox_total": {
+            "type": "integer",
+            "title": "Outbox Total"
+          },
+          "dead_letters": {
+            "type": "integer",
+            "title": "Dead Letters"
+          },
+          "dead_letters_unresolved": {
+            "type": "integer",
+            "title": "Dead Letters Unresolved"
+          },
+          "indexer": {
+            "$ref": "#/components/schemas/IndexerStatusView"
+          },
+          "quotas": {
+            "items": {
+              "$ref": "#/components/schemas/QuotaView"
+            },
+            "type": "array",
+            "title": "Quotas"
+          },
+          "scheduler_enabled": {
+            "type": "boolean",
+            "title": "Scheduler Enabled"
+          },
+          "scheduler_running": {
+            "type": "boolean",
+            "title": "Scheduler Running"
+          },
+          "jobs": {
+            "items": {
+              "$ref": "#/components/schemas/SchedulerJobView"
+            },
+            "type": "array",
+            "title": "Jobs"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "observed_at",
+          "app_env",
+          "chain",
+          "outbox_total",
+          "dead_letters",
+          "dead_letters_unresolved",
+          "indexer",
+          "scheduler_enabled",
+          "scheduler_running"
+        ],
+        "title": "SystemStatusResponse",
+        "description": "The one screen worth checking before presenting."
+      },
+      "TagResponse": {
+        "properties": {
+          "item_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Item Id"
+          },
+          "tag_code": {
+            "type": "string",
+            "title": "Tag Code"
+          },
+          "display_code": {
+            "type": "string",
+            "title": "Display Code"
+          },
+          "payload_url": {
+            "type": "string",
+            "title": "Payload Url"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Warnings"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "item_id",
+          "tag_code",
+          "display_code",
+          "payload_url"
+        ],
+        "title": "TagResponse",
+        "description": "One issued tag, in both stored and printable form."
+      },
+      "Tier": {
+        "type": "string",
+        "enum": [
+          "IPFS",
+          "MIRROR",
+          "BLOB"
+        ],
+        "title": "Tier",
+        "description": "Where a copy of the bytes can be read from."
+      },
+      "TierResponse": {
+        "properties": {
+          "tier": {
+            "$ref": "#/components/schemas/Tier"
+          },
+          "url": {
+            "type": "string",
+            "title": "Url"
+          },
+          "durable": {
+            "type": "boolean",
+            "title": "Durable"
+          }
+        },
+        "type": "object",
+        "required": [
+          "tier",
+          "url",
+          "durable"
+        ],
+        "title": "TierResponse",
+        "description": "One place these bytes can be fetched from."
+      },
+      "TokenResponse": {
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "title": "Access Token"
+          },
+          "token_type": {
+            "type": "string",
+            "title": "Token Type",
+            "default": "bearer"
+          },
+          "expires_in": {
+            "type": "integer",
+            "title": "Expires In"
+          },
+          "user": {
+            "$ref": "#/components/schemas/UserResponse"
+          }
+        },
+        "type": "object",
+        "required": [
+          "access_token",
+          "expires_in",
+          "user"
+        ],
+        "title": "TokenResponse",
+        "description": "Login and refresh response. The refresh token rides in the cookie."
+      },
+      "TreeNodeResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "parent_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Parent Id"
+          },
+          "depth": {
+            "type": "integer",
+            "title": "Depth"
+          },
+          "quantity": {
+            "type": "string",
+            "title": "Quantity"
+          },
+          "quantity_unit": {
+            "type": "string",
+            "title": "Quantity Unit"
+          },
+          "item_hash": {
+            "type": "string",
+            "title": "Item Hash"
+          },
+          "tag_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tag Code"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "parent_id",
+          "depth",
+          "quantity",
+          "quantity_unit",
+          "item_hash",
+          "tag_code",
+          "status"
+        ],
+        "title": "TreeNodeResponse",
+        "description": "One node of an ancestry chain or subtree."
+      },
+      "TreeStepView": {
+        "properties": {
+          "depth": {
+            "type": "integer",
+            "title": "Depth"
+          },
+          "quantity": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Quantity"
+          },
+          "quantity_unit": {
+            "type": "string",
+            "title": "Quantity Unit"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "depth",
+          "quantity",
+          "quantity_unit",
+          "status"
+        ],
+        "title": "TreeStepView",
+        "description": "One step of the lineage, without naming the item it refers to.\n\nDepth and quantity are what a reader needs -- \"this two-metre piece was cut\nfrom a twelve-metre bolt\". The ancestor's id and its own tag code are left\nout: they identify other objects, which are not this reader's business."
+      },
+      "TrustLevel": {
+        "type": "string",
+        "enum": [
+          "SELF_DECLARED",
+          "CO_OP_ATTESTED",
+          "INSPECTED",
+          "DISPUTED"
+        ],
+        "title": "TrustLevel",
+        "description": "How much independent corroboration a record has attracted.\n\nDeliberately a description of the evidence, not a judgement about the\nobject. None of these values says anything is real, and none of them ever\nshould -- see the module docstring."
+      },
+      "TrustResponse": {
+        "properties": {
+          "item_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Item Id"
+          },
+          "level": {
+            "$ref": "#/components/schemas/TrustLevel"
+          },
+          "contributing_roles": {
+            "items": {
+              "$ref": "#/components/schemas/UserRole"
+            },
+            "type": "array",
+            "title": "Contributing Roles"
+          },
+          "attestation_count": {
+            "type": "integer",
+            "title": "Attestation Count"
+          },
+          "distinct_attestor_count": {
+            "type": "integer",
+            "title": "Distinct Attestor Count"
+          },
+          "dispute_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dispute Reason"
+          },
+          "flagged_attestor_count": {
+            "type": "integer",
+            "title": "Flagged Attestor Count",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "required": [
+          "item_id",
+          "level",
+          "contributing_roles",
+          "attestation_count",
+          "distinct_attestor_count"
+        ],
+        "title": "TrustResponse",
+        "description": "What corroboration a record has attracted. Not a verdict about the object.\n\n``level`` describes the evidence, and the fields beneath it are that\nevidence, so a reader who wants to weigh it themselves can. A payload that\ncarried only the level would be asking to be trusted; this one shows its\nworking."
+      },
+      "TrustView": {
+        "properties": {
+          "level": {
+            "type": "string",
+            "title": "Level"
+          },
+          "contributing_roles": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Contributing Roles"
+          },
+          "attestation_count": {
+            "type": "integer",
+            "title": "Attestation Count",
+            "default": 0
+          },
+          "disputed": {
+            "type": "boolean",
+            "title": "Disputed",
+            "default": false
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "level"
+        ],
+        "title": "TrustView",
+        "description": "Who vouched, in what capacity, and how many times. Not a score."
+      },
+      "UpdateCategoryRequest": {
+        "properties": {
+          "display_name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Display Name"
+          },
+          "is_active": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Active"
+          }
+        },
+        "type": "object",
+        "title": "UpdateCategoryRequest",
+        "description": "Mutable category metadata.\n\n``slug`` and ``attribute_schema`` are absent, not optional. A slug is\nreferenced by URLs and printed tags; a schema change is a new version by\ndefinition. Neither is reachable through this model, so neither can be\nchanged by any shape of request body."
+      },
+      "UpdateProfileRequest": {
+        "properties": {
+          "display_name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Display Name"
+          },
+          "region": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Region"
+          }
+        },
+        "type": "object",
+        "title": "UpdateProfileRequest",
+        "description": "The only two fields a user may change about themselves.\n\n``extra=\"ignore\"`` plus the absence of role/status/email means a request\ncarrying them is accepted and those fields are silently dropped -- there is\nno branch that could apply them. Escalation via PATCH is structurally\nimpossible rather than defended against."
+      },
+      "UserResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email"
+          },
+          "display_name": {
+            "type": "string",
+            "title": "Display Name"
+          },
+          "role": {
+            "$ref": "#/components/schemas/UserRole"
+          },
+          "status": {
+            "$ref": "#/components/schemas/UserStatus"
+          },
+          "region": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Region"
+          },
+          "org_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Org Name"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "last_login_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Login At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "email",
+          "display_name",
+          "role",
+          "status",
+          "created_at"
+        ],
+        "title": "UserResponse",
+        "description": "Public shape of a user. No password hash, no identity salt, ever."
+      },
+      "UserRole": {
+        "type": "string",
+        "enum": [
+          "CONSUMER",
+          "WEAVER",
+          "COOP_OFFICER",
+          "INSPECTOR",
+          "ADMIN"
+        ],
+        "title": "UserRole",
+        "description": "Who someone is in the supply chain. One role per user."
+      },
+      "UserStatus": {
+        "type": "string",
+        "enum": [
+          "PENDING_VERIFICATION",
+          "ACTIVE",
+          "SUSPENDED"
+        ],
+        "title": "UserStatus",
+        "description": "Account lifecycle state."
+      },
+      "ValidateAttributesRequest": {
+        "properties": {
+          "attributes": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Attributes"
+          },
+          "schema_version": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Schema Version"
+          }
+        },
+        "type": "object",
+        "required": [
+          "attributes"
+        ],
+        "title": "ValidateAttributesRequest",
+        "description": "Dry-run attribute check. Writes nothing."
+      },
+      "ValidateAttributesResponse": {
+        "properties": {
+          "valid": {
+            "type": "boolean",
+            "title": "Valid"
+          },
+          "slug": {
+            "type": "string",
+            "title": "Slug"
+          },
+          "schema_version": {
+            "type": "integer",
+            "title": "Schema Version"
+          }
+        },
+        "type": "object",
+        "required": [
+          "valid",
+          "slug",
+          "schema_version"
+        ],
+        "title": "ValidateAttributesResponse"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      },
+      "VerificationResult": {
+        "type": "string",
+        "enum": [
+          "MATCH",
+          "MISMATCH",
+          "UNANCHORED"
+        ],
+        "title": "VerificationResult",
+        "description": "The outcome of recomputing the hash and comparing it to the chain."
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  }
+}

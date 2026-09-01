@@ -1,0 +1,61 @@
+{
+  "slug": "patola-silk",
+  "display_name": "Patan Patola Silk",
+  "is_textile": true,
+  "quantity_unit": "metre",
+  "schema_version": 1,
+  "attribute_schema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://sutradhar.local/schemas/patola-silk/1",
+    "title": "Patan Patola Silk",
+    "description": "Double-ikat silk woven in Patan, Gujarat. GI 2013.",
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "warp_count",
+      "weft_count",
+      "dye_type",
+      "double_ikat",
+      "loom_type",
+      "weave_days",
+      "gi_registration_no"
+    ],
+    "properties": {
+      "warp_count": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 10000,
+        "description": "Warp threads per inch."
+      },
+      "weft_count": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 10000,
+        "description": "Weft threads per inch."
+      },
+      "dye_type": {
+        "type": "string",
+        "enum": ["natural", "synthetic"]
+      },
+      "double_ikat": {
+        "type": "boolean",
+        "description": "True when both warp and weft are resist-dyed before weaving."
+      },
+      "loom_type": {
+        "type": "string",
+        "enum": ["pit", "frame"]
+      },
+      "weave_days": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 3650,
+        "description": "Loom days. A full double-ikat sari runs to several hundred."
+      },
+      "gi_registration_no": {
+        "type": "string",
+        "pattern": "^GI-[0-9]{3,6}$",
+        "description": "Registration number under the GI Act 1999."
+      }
+    }
+  }
+}

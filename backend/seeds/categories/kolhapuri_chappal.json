@@ -1,0 +1,49 @@
+{
+  "slug": "kolhapuri-chappal",
+  "display_name": "Kolhapuri Chappal",
+  "is_textile": false,
+  "quantity_unit": "pair",
+  "schema_version": 1,
+  "attribute_schema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://sutradhar.local/schemas/kolhapuri-chappal/1",
+    "title": "Kolhapuri Chappal",
+    "description": "Hand-braided leather footwear from Kolhapur. GI 2019. Not a textile -- this category exists to demonstrate that the schema engine is category-agnostic, not Patola-specific.",
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "leather_type",
+      "tanning_method",
+      "sole_thickness_mm",
+      "braid_pattern",
+      "artisan_cluster"
+    ],
+    "properties": {
+      "leather_type": {
+        "type": "string",
+        "enum": ["buffalo", "goat"]
+      },
+      "tanning_method": {
+        "type": "string",
+        "enum": ["vegetable", "chrome"],
+        "description": "Vegetable tanning is the traditional method and commands a premium."
+      },
+      "sole_thickness_mm": {
+        "type": "number",
+        "exclusiveMinimum": 0,
+        "maximum": 40,
+        "description": "Millimetres. A number, not an integer -- half-millimetre grades are normal."
+      },
+      "braid_pattern": {
+        "type": "string",
+        "minLength": 2,
+        "maxLength": 60
+      },
+      "artisan_cluster": {
+        "type": "string",
+        "minLength": 2,
+        "maxLength": 80
+      }
+    }
+  }
+}

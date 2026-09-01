@@ -1,0 +1,186 @@
+{
+  "_comment": [
+    "The live demo dataset. Every item here earns its place by demonstrating one",
+    "specific behaviour on stage:",
+    "  patola_bolt + two sarees -- a split tree that does NOT add up (12.0m parent,",
+    "    2 x 5.5m children, 1.0m unallocated). A tidy tree proves nothing; a",
+    "    realistic remainder proves the arithmetic is real.",
+    "  sambalpuri_sari    -- three attestations (weaver + co-op + inspector), the",
+    "    INSPECTED trust level Phase 8 computes.",
+    "  kolhapuri_pair     -- weaver attestation only, SELF_DECLARED, and a",
+    "    non-textile category on the same engine.",
+    "  suspect_patola     -- registered by the fraud-flagged weaver.",
+    "  scanned_sari       -- a tag and a scan history from one region, so the",
+    "    Phase 11 anomaly detector has a believable baseline to deviate from.",
+    "",
+    "item_hash is NOT in this file. It is computed at load time by",
+    "seeds/hashing.py, which Phase 6 replaces with provenance/item_hash.py."
+  ],
+  "items": [
+    {
+      "key": "patola_bolt",
+      "category": "patola-silk",
+      "registered_by": "weaver_patola",
+      "parent": null,
+      "quantity": "12.0000",
+      "attributes": {
+        "warp_count": 120,
+        "weft_count": 116,
+        "dye_type": "natural",
+        "double_ikat": true,
+        "loom_type": "pit",
+        "weave_days": 210,
+        "gi_registration_no": "GI-00232"
+      }
+    },
+    {
+      "key": "patola_saree_a",
+      "category": "patola-silk",
+      "registered_by": "weaver_patola",
+      "parent": "patola_bolt",
+      "quantity": "5.5000",
+      "issue_tag": true,
+      "attributes": {
+        "warp_count": 120,
+        "weft_count": 116,
+        "dye_type": "natural",
+        "double_ikat": true,
+        "loom_type": "pit",
+        "weave_days": 210,
+        "gi_registration_no": "GI-00232"
+      }
+    },
+    {
+      "key": "patola_saree_b",
+      "category": "patola-silk",
+      "registered_by": "weaver_patola",
+      "parent": "patola_bolt",
+      "quantity": "5.5000",
+      "issue_tag": true,
+      "attributes": {
+        "warp_count": 120,
+        "weft_count": 116,
+        "dye_type": "natural",
+        "double_ikat": true,
+        "loom_type": "pit",
+        "weave_days": 210,
+        "gi_registration_no": "GI-00232"
+      }
+    },
+    {
+      "key": "sambalpuri_sari",
+      "category": "sambalpuri-bandha",
+      "registered_by": "weaver_sambalpuri",
+      "parent": null,
+      "quantity": "6.0000",
+      "issue_tag": true,
+      "attributes": {
+        "tie_dye_technique": "bandha",
+        "motif_set": ["shankha", "chakra", "phula"],
+        "thread_material": "tussar",
+        "yarn_source_district": "Bargarh",
+        "gi_registration_no": "GI-00108"
+      },
+      "attestations": [
+        {
+          "by": "weaver_sambalpuri",
+          "statement": {
+            "claim": "woven_by_me",
+            "loom_id": "BGH-LOOM-114",
+            "completed_on": "2026-06-14"
+          }
+        },
+        {
+          "by": "coop_officer",
+          "statement": {
+            "claim": "member_in_good_standing",
+            "society": "Bargarh Bandha Karigar Samiti",
+            "membership_no": "BBKS-2019-0447"
+          }
+        },
+        {
+          "by": "inspector",
+          "statement": {
+            "claim": "gi_criteria_met",
+            "inspection_ref": "GITI-2026-0912",
+            "verified_on": "2026-07-02"
+          }
+        }
+      ]
+    },
+    {
+      "key": "kolhapuri_pair",
+      "category": "kolhapuri-chappal",
+      "registered_by": "weaver_kolhapuri",
+      "parent": null,
+      "quantity": "1.0000",
+      "issue_tag": true,
+      "attributes": {
+        "leather_type": "buffalo",
+        "tanning_method": "vegetable",
+        "sole_thickness_mm": 8.5,
+        "braid_pattern": "kapshi",
+        "artisan_cluster": "Kolhapur North"
+      },
+      "attestations": [
+        {
+          "by": "weaver_kolhapuri",
+          "statement": {
+            "claim": "made_by_me",
+            "workshop": "Shaikh Charmakar Works",
+            "completed_on": "2026-07-20"
+          }
+        }
+      ]
+    },
+    {
+      "key": "suspect_patola",
+      "category": "patola-silk",
+      "registered_by": "weaver_flagged",
+      "parent": null,
+      "quantity": "9.0000",
+      "attributes": {
+        "warp_count": 96,
+        "weft_count": 92,
+        "dye_type": "synthetic",
+        "double_ikat": false,
+        "loom_type": "frame",
+        "weave_days": 6,
+        "gi_registration_no": "GI-00232"
+      }
+    },
+    {
+      "key": "scanned_sari",
+      "category": "sambalpuri-bandha",
+      "registered_by": "weaver_sambalpuri",
+      "parent": null,
+      "quantity": "5.5000",
+      "issue_tag": true,
+      "attributes": {
+        "tie_dye_technique": "sapta",
+        "motif_set": ["macha", "phula"],
+        "thread_material": "cotton",
+        "yarn_source_district": "Sonepur",
+        "gi_registration_no": "GI-00108"
+      },
+      "attestations": [
+        {
+          "by": "weaver_sambalpuri",
+          "statement": {
+            "claim": "woven_by_me",
+            "loom_id": "SNP-LOOM-031",
+            "completed_on": "2026-05-30"
+          }
+        }
+      ],
+      "scans": [
+        { "days_ago": 21, "country_code": "IN", "region_code": "IN-OD" },
+        { "days_ago": 18, "country_code": "IN", "region_code": "IN-OD" },
+        { "days_ago": 14, "country_code": "IN", "region_code": "IN-OD" },
+        { "days_ago": 9, "country_code": "IN", "region_code": "IN-OD" },
+        { "days_ago": 4, "country_code": "IN", "region_code": "IN-OD" },
+        { "days_ago": 1, "country_code": "IN", "region_code": "IN-OD" }
+      ]
+    }
+  ]
+}

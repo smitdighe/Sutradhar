@@ -1,0 +1,34 @@
+# --- Python ---
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.Python
+
+# --- Environments ---
+.venv/
+.env
+.env.local
+
+# --- Secrets / generated key material ---
+keys/
+!keys/.gitkeep
+
+# --- Local IPFS mirror ---
+media_mirror/
+!media_mirror/.gitkeep
+
+# --- Tooling caches ---
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# --- Solidity / Hardhat ---
+contracts/node_modules/
+contracts/artifacts/
+contracts/cache/
+
+backend/docs/

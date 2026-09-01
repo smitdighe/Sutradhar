@@ -1,0 +1,14 @@
+{
+  "name": "sutradhar-contracts",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Solidity anchoring registry for the Sutradhar GI-handloom provenance layer.",
+  "scripts": {
+    "compile": "hardhat compile && node scripts/export-abi.js",
+    "node": "hardhat node",
+    "clean": "hardhat clean"
+  },
+  "devDependencies": {
+    "hardhat": "^2.22.17"
+  }
+}
